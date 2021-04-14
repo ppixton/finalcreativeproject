@@ -7,7 +7,7 @@
     </div>
     <router-view/>
     <div class="footer">
-      <p>Footer</p>
+      <p>A Parker Pixton Production | <a href="https://github.com/ppixton/creativeproject4">Github Repository</a></p>
     </div>
   </div>
 </template>

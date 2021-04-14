@@ -4,7 +4,6 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Customer</th>
                         <th>Email</th>
                         <th>State</th>
@@ -21,7 +20,6 @@
                 </thead>
                 <tbody>
                     <tr v-for="item in items" :key="item.id">
-                        <td>{{item.id}}</td>
                         <td>{{item.name}}</td>
                         <td>{{item.email}}</td>
                         <td>{{item.state}}</td>
@@ -32,12 +30,14 @@
                         <td>{{item.size}}</td>
                         <td>{{item.uni}}</td>
                         <td>{{item.status}}</td>
-                        <td>{{item.embroiderer}}</td>
+                        <td>{{item.artist.fname}}</td>
                         <td>                
-                                <router-link :to="`/edit/${item.id}`">
+                                <router-link :to="`/edit/${item._id}`">
                                     <button class="btn btn-secondary btn-sm">Edit</button>
                                 </router-link> | 
+                            <router-link :to="'/#'">
                             <button class="btn btn-dark btn-sm" @click="myDelete(item)">Delete</button>
+                            </router-link>
                         </td>
                     </tr>
                 </tbody>
@@ -47,15 +47,21 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'ItemList',
   props: {
     items: Array
   },
   methods: {
-      myDelete(item){
-          this.$root.$data.items.splice(this.$root.$data.items.indexOf(item),1);
-      }
+      async myDelete(item){
+          try {
+            await axios.delete("/api/items/" + item._id);
+            return true;
+          } catch(error) {
+              console.log(error);
+          }
+      },
   }
 }
 </script>

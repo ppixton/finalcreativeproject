@@ -1,10 +1,5 @@
 <template>
   <div class="wrapper">
-    <router-link to="/admin">
-    <div class="mybutton">
-    <button class="btn btn-success btn-lg">Add an Order </button>
-    </div>
-    </router-link>
     <ItemList :items="items" />
   </div>
 </template>
@@ -22,6 +17,7 @@ export default {
   data() {
     return {
       items: [],
+      artistID: this.$route.params.id,
     }
   },
   created() {
@@ -30,7 +26,7 @@ export default {
   methods: {
     async getItems() {
       try {
-        let response = await axios.get("/api/items");
+        let response = await axios.get("/api/artists/" + this.artistID + "/items");
         this.items = response.data;
         return true;
       } catch (error){

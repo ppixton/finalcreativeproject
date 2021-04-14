@@ -5,6 +5,11 @@ import Table from '../views/Table.vue'
 import Admin from '../views/Admin.vue'
 import Edit from '../views/Edit.vue'
 
+import ArtistTable from '../views/ArtistTable.vue'
+import AddArtist from '../views/AddArtist.vue'
+import ArtistItemTable from '../views/ArtistItemTable.vue'
+import EditArtist from '../views/EditArtist.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -19,14 +24,34 @@ const routes = [
     component: Table
   },
   {
+    path: '/artists',
+    name: 'ArtistTable',
+    component: ArtistTable
+  },
+  {
     path: '/admin',
     name: 'Admin',
     component : Admin
   },
   {
+    path: '/addartist',
+    name: 'AddArtist',
+    component : AddArtist
+  },
+  {
     path: '/edit/:id',
     name: 'Edit',
     component: Edit
+  },
+  {
+    path: '/edit/artist/:id',
+    name: 'EditArtist',
+    component: EditArtist
+  },
+  {
+    path: '/view/:id',
+    name: 'ArtistItemTable',
+    component: ArtistItemTable
   }
 ]
 

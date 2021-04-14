@@ -55,12 +55,20 @@
                 <br>
                 <br>
 
-                <label for="embroiderer">Artist Responsible: </label>
-                <input id="embroiderer" v-model="embroiderer" type="text" embroiderer="embroiderer">
+                <label for="artist">Artist Responsible: </label>
+                <select id="artist" v-model="artist" artist="artist" class="form-control">
+                  <option disabled value="" selected="selected">Please select one</option>
+                  <option v-for="artist in artists" :key="artist._id" v-bind:value="artist._id">
+                          {{artist.fname}}
+                  </option>
+                </select>
                 <br>
                 <br>
-                    
-                <button class="btn btn-success btn-lg" @click="mySubmit">Submit</button>
+
+                <router-link to="/table">
+                  <button class="btn btn-success btn-lg" @click="newSubmit">Submit</button>
+                </router-link>
+                
 
         </div>
     </div>
@@ -72,6 +80,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'Admin',
   data(){
@@ -87,32 +96,46 @@ export default {
             size: "",
             uni: "",
             status: "",
-            embroiderer: "",
+            artist: "",
+            artists: [],
       }
     
+  },
+  created() {
+    this.getArtists();
   },
   components: {
   },
   methods:{
-      mySubmit (){
-          this.$root.$data.idLength += 1;
-          let sObj = {
-            "id": this.$root.$data.idLength,
-            "name": this.name,
-            "email": this.email,
-            "state": this.state,
-            "city": this.city,
-            "address": this.address,
-            "zip": this.zip,
-            "color": this.color,
-            "size": this.size,
-            "uni": this.uni,
-            "status": this.status,
-            "embroiderer": this.embroiderer,
-          }
-          console.log(sObj)
-          this.$root.$data.items.push(sObj)
+      async newSubmit () {
+        try {
+          let response = await axios.post('/api/' + this.artist + '/items', {
+            name: this.name,
+            email: this.email,
+            state: this.state,
+            city: this.city,
+            address: this.address,
+            zip: this.zip,
+            color: this.color,
+            size: this.size,
+            uni: this.uni,
+            status: this.status,
+          });
+          console.log(response)
+        } catch (error) {
+          console.log(error);
+        }
+      },
+
+    async getArtists() {
+      try {
+        let response = await axios.get("/api/artists");
+        this.artists = response.data;
+        return true;
+      } catch (error){
+        console.log(error)
       }
+    },
   }
 }
 </script>

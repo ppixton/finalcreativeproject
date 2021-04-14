@@ -7,7 +7,7 @@
     <div class="add">
         <div class="form">
                 <label for="name">Full Name: </label>
-                <input id="name" v-model="name" type="text" name="name" value="meene">
+                <input id="name" v-model="name" type="text" name="name">
                 <br>
                 <br>
 
@@ -56,13 +56,18 @@
                 <br>
                 <br>
 
-                <label for="embroiderer">Artist Responsible: </label>
-                <input id="embroiderer" v-model="embroiderer" type="text" embroiderer="embroiderer">
+                <label for="artist">Artist Responsible: </label>
+                <select id="artist" v-model="artist" artist="artist" class="form-control">
+                  <option disabled value="" selected="selected">Please select one</option>
+                  <option v-for="artist in artists" :key="artist._id" v-bind:value="artist._id">
+                          {{artist.fname}}
+                  </option>
+                </select>
                 <br>
                 <br>
 
                 <router-link to="/table">
-                <button class="btn btn-success btn-lg" @click="myEdit">Edit</button>
+                <button class="btn btn-success btn-lg" @click="editItem()">Edit</button>
                 </router-link>
         </div>
     </div>
@@ -71,84 +76,99 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'Admin',
   data(){
       return {
-            name: "",
-            email: "",
-            state: "",
-            city: "",
-            address: "",
-            zip: "",
-            color: "",
-            size: "",
-            uni: "",
-            status: "",
-            embroiderer: "",
+        name: "",
+        email: "",
+        state: "",
+        city: "",
+        address: "",
+        zip: "",
+        color: "",
+        size: "",
+        uni: "",
+        status: "",
+        artist: "",
+        artists: [],
+        item: Object,
       }
     
   },
-  components: {
+  created() {
+    this.getItem();
   },
   methods:{
-      myEdit (){
-          let sObj = {
-            "id": this.$route.params.id,
-            "name": this.name,
-            "email": this.email,
-            "state": this.state,
-            "city": this.city,
-            "address": this.address,
-            "zip": this.zip,
-            "color": this.color,
-            "size": this.size,
-            "uni": this.uni,
-            "status": this.status,
-            "embroiderer": this.embroiderer,
-          }
-          for (let i=0; i < this.$root.$data.items.length; i++)
-          {
-
-              let item = JSON.parse(JSON.stringify(this.$root.$data.items[i]))
-              if (item.id == this.$route.params.id){
-                if(this.name === ""){
-                    sObj.name = item.name
-                }
-                if(this.email === ""){
-                    sObj.email = item.email
-                }
-                if(this.state === ""){
-                    sObj.state = item.state
-                }
-                if(this.city === ""){
-                    sObj.city = item.city
-                }
-                if(this.address === ""){
-                    sObj.address = item.address
-                }
-                if(this.zip === ""){
-                    sObj.zip = item.zip
-                }
-                if(this.color === ""){
-                    sObj.color = item.color
-                }
-                if(this.size === ""){
-                    sObj.size = item.size
-                }
-                if(this.uni === ""){
-                    sObj.uni = item.uni
-                }
-                if(this.status === ""){
-                    sObj.status = item.status
-                }
-                if(this.embroiderer === ""){
-                    sObj.embroiderer = item.embroiderer
-                }
-                this.$root.$data.items[i] = sObj
-              }
+      async editItem (){
+          if (this.name === ""){
+                this.name = this.item.name
+            }
+            if (this.email === ""){
+                this.email = this.item.email
+            }
+            if (this.state === ""){
+                this.state = this.item.state
+            }
+            if (this.city === ""){
+                this.city = this.item.city
+            }
+            if (this.address === ""){
+                this.address = this.item.address
+            }
+            if (this.zip === ""){
+                this.zip = this.item.zip
+            }
+            if (this.color === ""){
+                this.color = this.item.color
+            }
+            if (this.size === ""){
+                this.size = this.item.size
+            }
+            if (this.uni === ""){
+                this.uni = this.item.uni
+            }
+            if (this.status === ""){
+                this.status = this.item.status
+            }
+          try{
+            await axios.put("/api/" + this.artist + "/items/" + this.item._id, {
+                name: this.name,
+                email: this.email,
+                state: this.state,
+                city: this.city,
+                address: this.address,
+                zip: this.zip,
+                color: this.color,
+                size: this.size,
+                uni: this.uni,
+                status: this.status,
+             })
+              return true;
+            } catch(error) {
+              console.log(error)
           }
       },
+      async getItem (){
+          this.getArtists();
+        try {
+            let response = await axios.get("/api/items/" + this.$route.params.id);
+            this.item = response.data;
+            return true;
+        } catch (error){
+            console.log(error)
+        }
+      },
+      async getArtists(){
+        try {
+            let response = await axios.get("/api/artists");
+            this.artists = response.data;
+            return true;
+      } catch (error){
+            console.log(error)
+      }
+      }
   }
 }
 </script>

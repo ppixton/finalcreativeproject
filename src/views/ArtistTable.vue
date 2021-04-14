@@ -1,37 +1,37 @@
 <template>
   <div class="wrapper">
-    <router-link to="/admin">
+    <router-link to="/addartist">
     <div class="mybutton">
-    <button class="btn btn-success btn-lg">Add an Order </button>
+    <button class="btn btn-success btn-lg">Add an Artist </button>
     </div>
     </router-link>
-    <ItemList :items="items" />
+    <ArtistList :artists="artists" />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import axios from 'axios';
-import ItemList from "../components/ItemList.vue"
+import ArtistList from "../components/ArtistList.vue"
 
 export default {
   name: 'Table',
   components: {
-    ItemList
+    ArtistList
   },
   data() {
     return {
-      items: [],
+      artists: [],
     }
   },
   created() {
-    this.getItems();
+    this.getArtists();
   },
   methods: {
-    async getItems() {
+    async getArtists() {
       try {
-        let response = await axios.get("/api/items");
-        this.items = response.data;
+        let response = await axios.get("/api/artists");
+        this.artists = response.data;
         return true;
       } catch (error){
         console.log(error)

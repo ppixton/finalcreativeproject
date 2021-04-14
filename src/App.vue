@@ -2,9 +2,13 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/table">Table</router-link>
+      <router-link to="/table">Table</router-link> |
+      <router-link to="/artists">Artists</router-link>
     </div>
     <router-view/>
+    <div class="footer">
+      <p>Footer</p>
+    </div>
   </div>
 </template>
 
@@ -29,4 +33,17 @@
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: grey;
+  color: white;
+  text-align: center;
+  height: 25px;
+}
+
+
 </style>

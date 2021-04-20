@@ -35,7 +35,7 @@
                                 <router-link :to="`/edit/${item._id}`">
                                     <button class="btn btn-secondary btn-sm">Edit</button>
                                 </router-link> | 
-                            <router-link :to="'/#'">
+                            <router-link :to="'/table'">
                             <button class="btn btn-dark btn-sm" @click="myDelete(item)">Delete</button>
                             </router-link>
                         </td>

@@ -3,6 +3,13 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const app = express();
+
+
+const users = require("./users.js");
+const User = users.model;
+const validUser = users.valid;
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
@@ -13,6 +20,21 @@ mongoose.connect('mongodb://localhost:27017/stitches', {
   useNewUrlParser: true
 });
 
+  const cookieParser = require("cookie-parser");
+  app.use(cookieParser());
+  
+  const cookieSession = require('cookie-session');
+  app.use(cookieSession({
+    name: 'session',
+    keys: [
+      'secretValue'
+    ],
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+  }));
+
+
 
 const artistSchema = new mongoose.Schema({
     fname: String,
@@ -20,18 +42,23 @@ const artistSchema = new mongoose.Schema({
     email: String,
     location: String,
     employed: String,
+    user: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }
 })
 
 const Artist = mongoose.model('Artist', artistSchema);
 
 // Create an Artist
-app.post('/api/artists', async (req, res) => {
+app.post('/api/artists', validUser, async (req, res) => {
     const artist = new Artist({
       fname: req.body.fname,
       lname: req.body.lname,
       email: req.body.email,
       location: req.body.location,
-      employed: req.body.employed
+      employed: req.body.employed,
+      user: req.user,
     });
     try {
       await artist.save();
@@ -41,6 +68,21 @@ app.post('/api/artists', async (req, res) => {
       res.sendStatus(500);
     }
   });
+
+//Get a list of Artists specific to a User
+app.get('/api/artists/dash', validUser, async (req, res) => {
+    try {
+        let artists = await Artist.find({
+            user: req.user
+        }).sort({
+            created: -1
+        }).populate('user');
+        return res.send(artists);
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(500);
+    }
+});
 
 //Get a list of all Artists
 app.get('/api/artists', async (req, res) => {
@@ -67,7 +109,7 @@ app.get('/api/artist/:id', async (req, res) => {
 });
 
 //Delete an Artist
-app.delete('/api/artists/:id', async (req, res) =>{
+app.delete('/api/artists/:id', validUser, async (req, res) =>{
     try {
         let artist = await Artist.deleteOne({
             _id: req.params.id
@@ -80,7 +122,7 @@ app.delete('/api/artists/:id', async (req, res) =>{
 });
 
 //Edit an Artist
-app.put('/api/artists/:id', async (req, res) =>{
+app.put('/api/artists/:id', validUser, async (req, res) =>{
     try{
         let artist = await Artist.findOne({
             _id: req.params.id
@@ -125,7 +167,7 @@ const itemSchema = new mongoose.Schema({
 const Item = mongoose.model('Item', itemSchema);
 
 // Add an Item
-app.post('/api/:artistID/items', async (req, res) => {
+app.post('/api/:artistID/items', validUser, async (req, res) => {
     let artist = await Artist.findOne({
         _id: req.params.artistID
     });
@@ -198,7 +240,7 @@ app.get('/api/items/:id', async (req,res) => {
 });
 
 //Delete an item
-app.delete('/api/items/:id', async (req, res) =>{
+app.delete('/api/items/:id', validUser, async (req, res) =>{
     try {
         let items = await Item.deleteOne({
             _id: req.params.id
@@ -210,8 +252,8 @@ app.delete('/api/items/:id', async (req, res) =>{
     }
 });
 
-//Edit an item (need to change this to incorporate artists)
-app.put('/api/:artistID/items/:id', async (req,res) =>{
+//Edit an item
+app.put('/api/:artistID/items/:id', validUser, async (req,res) =>{
     try {
         let artist = await Artist.findOne({
             _id: req.params.artistID
@@ -243,5 +285,7 @@ app.put('/api/:artistID/items/:id', async (req,res) =>{
     }
 });
 
+// import the users module and setup its API path
+app.use("/api/users", users.routes);
 
-app.listen(3000, () => console.log('Server listening on port 3000!'));
+app.listen(3000, () => console.log('Server listening on port 3002!'));

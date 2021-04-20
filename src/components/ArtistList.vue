@@ -29,9 +29,7 @@
                                 <router-link :to="`/edit/artist/${artist._id}`">
                                     <button class="btn btn-secondary btn-sm">Edit</button>
                                 </router-link> | 
-                            <router-link :to="'/#'" >
                             <button class="btn btn-dark btn-sm" @click="myDelete(artist)">Delete</button>
-                            </router-link>
                         </td>
                     </tr>
                 </tbody>

@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <ItemList :items="items" />
+    <ItemList :items="items"/>
   </div>
 </template>
 

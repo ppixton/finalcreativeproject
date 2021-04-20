@@ -2,6 +2,11 @@
   <div class="wrapper">
     <div class="jumbotron">
       <h1 class="display-4">Welcome!</h1>
+      <div class="loginbutton">
+          <router-link to="/login">
+            <button class="btn btn-info btn-lg">Login | Register</button>
+          </router-link>
+      </div>
       <p class="lead">Madi Stitches Embroidered Sweatshirt Orders Page</p>
       <hr class="my-4">
       <p>On the table page you are able to view the current list of order requests for our embroidered sweatshirts.

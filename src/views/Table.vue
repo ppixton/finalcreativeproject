@@ -1,11 +1,14 @@
 <template>
-  <div class="wrapper">
-    <router-link to="/admin">
-    <div class="mybutton">
-    <button class="btn btn-success btn-lg">Add an Order </button>
+  <div>
+      <div v-if="user" class="wrapper">
+      <router-link to="/admin">
+      <div class="mybutton">
+      <button class="btn btn-success btn-lg">Add an Order </button>
+      </div>
+      </router-link>
+      <ItemList :items="items" />
     </div>
-    </router-link>
-    <ItemList :items="items" />
+  <Login v-else />
   </div>
 </template>
 
@@ -13,11 +16,13 @@
 // @ is an alias to /src
 import axios from 'axios';
 import ItemList from "../components/ItemList.vue"
+import Login from "../components/Login.vue"
 
 export default {
   name: 'Table',
   components: {
-    ItemList
+    ItemList,
+    Login
   },
   data() {
     return {
@@ -26,6 +31,12 @@ export default {
   },
   created() {
     this.getItems();
+    this.getUser();
+  },
+  computed: {
+    user() {
+      return this.$root.$data.user;
+    }
   },
   methods: {
     async getItems() {
@@ -36,7 +47,15 @@ export default {
       } catch (error){
         console.log(error)
       }
-    }
+    },
+    async getUser() {
+      try {
+        let response = await axios.get('/api/users');
+        this.$root.$data.user = response.data.user;
+      } catch (error) {
+        this.$root.$data.user = null;
+      }
+    },
   }
 }
 </script>
